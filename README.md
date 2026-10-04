@@ -1,6 +1,6 @@
 # Graph Explorer
 
-Welcome to the **Lemici Graph Explorer**! This project is a full-stack web application designed to help users interact with, visualize, and manage Nebula Graph database schemas and data. It features a drag-and-drop schema drafter, real-time DDL execution, and an interactive data explorer.
+Welcome to the **Graph Explorer**! This project is a full-stack web application designed to help users interact with, visualize, and manage Nebula Graph database schemas and data. It features a drag-and-drop schema drafter, real-time DDL execution, and an interactive data explorer.
 
 This document will guide you from unzipping the project to getting it fully running on your local machine.
 
