@@ -1,4 +1,4 @@
-# Lemici Graph Explorer
+# Graph Explorer
 
 Welcome to the **Lemici Graph Explorer**! This project is a full-stack web application designed to help users interact with, visualize, and manage Nebula Graph database schemas and data. It features a drag-and-drop schema drafter, real-time DDL execution, and an interactive data explorer.
 
@@ -10,7 +10,7 @@ This document will guide you from unzipping the project to getting it fully runn
 Once you unzip the provided file, you will see the following directory structure:
 
 ```text
-lemici-graph/
+Graph/
 ├── backend/            # Go Backend (REST API + WebSockets)
 ├── frontend/           # React Frontend (Vite + Tailwind + D3.js)
 └── README.md           # This documentation file
@@ -33,7 +33,7 @@ Before running the project, please ensure you have the following software instal
 The backend handles API requests, database migrations, and WebSocket connections for real-time querying. It runs on **Port 8080**.
 
 ### 1. Setup Database
-Ensure PostgreSQL is running on your machine and create a blank database named `lemici_graph` (or whatever name you prefer).
+Ensure PostgreSQL is running on your machine and create a blank database named `Graph` (or whatever name you prefer).
 
 ### 2. Configure Environment Variables
 Navigate into the `backend/` directory and create a new file named `.env`.
@@ -109,9 +109,9 @@ If you prefer to run the entire application using Docker, a complete `docker-com
 
 | Container Name | Service | Internal Port | External Port | Description |
 |---|---|---|---|---|
-| **lemici-postgres** | PostgreSQL DB | 5432 | 5432 | Stores schema drafts and workspace data. |
-| **lemici-backend** | Go Gin API | 8080 | 8080 | Core backend server handling requests and DB connections. |
-| **lemici-frontend** | React + Nginx | 80 | 5173 | Serves the UI and proxies API requests to the backend. |
+| **postgres** | PostgreSQL DB | 5432 | 5432 | Stores schema drafts and workspace data. |
+| **backend** | Go Gin API | 8080 | 8080 | Core backend server handling requests and DB connections. |
+| **frontend** | React + Nginx | 80 | 5173 | Serves the UI and proxies API requests to the backend. |
 
 *(Note: "External Port" is the port mapped in `docker-compose.yml` that you use in your browser/localhost to access the service from outside. "Internal Port" is what the container actually runs on inside the Docker network.)*
 
@@ -119,21 +119,21 @@ If you prefer to run the entire application using Docker, a complete `docker-com
 
 ### How They Are Connected
 
-All Docker containers run on a shared default Docker bridge network (`lemici-graph_default`), allowing them to talk to each other using their container names as hostnames:
+All Docker containers run on a shared default Docker bridge network (`graph_default`), allowing them to talk to each other using their container names as hostnames:
 
 1. **Frontend → Backend**: 
-   - The React app runs inside the `lemici-frontend` container using Nginx.
+   - The React app runs inside the `frontend` container using Nginx.
    - Nginx is configured to serve the UI on internal port `80` (mapped to `5173` for you).
-   - Any API or WebSocket request (e.g., `/api/*` or `/ws/*`) made by the UI is intercepted by Nginx and proxied internally to `http://lemici-backend:8080`.
+   - Any API or WebSocket request (e.g., `/api/*` or `/ws/*`) made by the UI is intercepted by Nginx and proxied internally to `http://backend:8080`.
 
 2. **Backend → PostgreSQL**:
-   - The Go server in `lemici-backend` connects to PostgreSQL using the hostname `postgres` (which resolves to the `lemici-postgres` container) on port `5432`.
+   - The Go server in `backend` connects to PostgreSQL using the hostname `postgres` (which resolves to the `postgres` container) on port `5432`.
 
 3. **Backend → Nebula Graph**:
-   - Since Nebula Graph is running directly on your Windows Host (not in this docker-compose), the `lemici-backend` container connects to it using the special IP address `192.168.1.10` (or `host.docker.internal`) on port `9669`.
+   - Since Nebula Graph is running directly on your Windows Host (not in this docker-compose), the `backend` container connects to it using the special IP address `192.168.1.10` (or `host.docker.internal`) on port `9669`.
 
 ### How to Start the Containers
-Open a terminal in the root folder (`lemici-graph/`) and run:
+Open a terminal in the root folder (`graph/`) and run:
 
 ```bash
 # Build and start all containers in detached mode
