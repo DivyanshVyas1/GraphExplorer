@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: lemici-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password
+      POSTGRES_DB: lemici
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  backend:
+    build: 
+      context: ./backend
+    container_name: lemici-backend
+    environment:
+      # Use the host's actual IPv4 address to avoid IPv6 resolution issues in Docker Windows
+      NEBULA_HOST: host.docker.internal
+      NEBULA_PORT: 9669
+      NEBULA_USER: root
+      NEBULA_PASSWORD: nebula
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Password
+      POSTGRES_DB: lemici
+      POSTGRES_PORT: 5432
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: lemici-frontend
+    ports:
+      - "5173:80" # Mapping internal Nginx 80 to external 5173 to match dev URL
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
